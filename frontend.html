@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-SQL Query System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        .input-section {
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #667eea;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .examples {
+            margin-top: 15px;
+        }
+        .examples h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .example-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .chip {
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chip:hover {
+            background: #e0e0e0;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-size: 18px;
+        }
+        .result-section {
+            display: none;
+        }
+        .result-section.show {
+            display: block;
+        }
+        .sql-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .sql-label {
+            color: #666;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .results-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .results-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .results-table tr:hover {
+            background: #f5f5f5;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .upload-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .upload-section h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .upload-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        input[type="file"] {
+            flex: 1;
+            padding: 10px;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        .tables-list {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .table-chip {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            background: #667eea;
+            color: white;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Text-to-SQL Query System</h1>
+            <p>Ask questions in plain English, get SQL results instantly</p>
+        </div>
+
+        <div class="main-card">
+            <div class="upload-section">
+                <h2>📁 Upload Your Data</h2>
+                <p style="color: #666; margin: 10px 0;">Upload CSV, Excel, or JSON file to query your own data</p>
+                <div class="upload-group">
+                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" />
+                    <button onclick="uploadFile()">Upload File</button>
+                </div>
+                <div id="uploadStatus" style="margin-top: 10px;"></div>
+                <div id="tablesList" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <div class="main-card">
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="questionInput" placeholder="Ask a question about your data..." />
+                    <button id="submitBtn" onclick="submitQuery()">Ask Question</button>
+                </div>
+                
+                <div class="examples">
+                    <h3>Try these examples:</h3>
+                    <div class="example-chips">
+                        <span class="chip" onclick="setQuestion('Show me all customers')">Show me all customers</span>
+                        <span class="chip" onclick="setQuestion('What are the top 5 products by price?')">Top 5 products by price</span>
+                        <span class="chip" onclick="setQuestion('Show me revenue by fiscal year')">Revenue by fiscal year</span>
+                        <span class="chip" onclick="setQuestion('Which business segment has the highest operating profit?')">Highest profit segment</span>
+                        <span class="chip" onclick="setQuestion('Show me stock performance for the last 10 days')">Stock performance</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                Processing your question...
+            </div>
+
+            <div id="resultSection" class="result-section">
+                <div class="sql-label">Generated SQL Query:</div>
+                <div id="sqlQuery" class="sql-box"></div>
+
+                <div class="sql-label">Results:</div>
+                <div id="results"></div>
+
+                <div class="stats">
+                    <span id="rowCount"></span>
+                    <span id="execTime"></span>
+                </div>
+            </div>
+
+            <div id="errorSection" style="display: none;" class="error"></div>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('questionInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const resultSection = document.getElementById('resultSection');
+        const errorSection = document.getElementById('errorSection');
+        let currentTable = null;
+
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitQuery();
+        });
+
+        function setQuestion(question) {
+            input.value = question;
+            input.focus();
+        }
+
+        async function submitQuery() {
+            const question = input.value.trim();
+            if (!question) return;
+
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            resultSection.classList.remove('show');
+            errorSection.style.display = 'none';
+
+            try {
+                const payload = { question: question };
+                if (currentTable) {
+                    payload.table_name = currentTable;
+                }
+
+                const response = await fetch('http://localhost:8000/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    showError(data.detail || 'An error occurred');
+                }
+            } catch (error) {
+                showError('Failed to connect to the API: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+
+        function displayResults(data) {
+            document.getElementById('sqlQuery').textContent = data.generated_sql;
+
+            const resultsDiv = document.getElementById('results');
+            
+            if (data.results && data.results.length > 0) {
+                const table = createTable(data.results);
+                resultsDiv.innerHTML = table;
+                document.getElementById('rowCount').textContent = `${data.results.length} rows`;
+            } else {
+                resultsDiv.innerHTML = '<p style="color: #666; padding: 20px;">No results found</p>';
+                document.getElementById('rowCount').textContent = '0 rows';
+            }
+
+            document.getElementById('execTime').textContent = `Execution time: ${data.execution_time_ms}ms`;
+            resultSection.classList.add('show');
+        }
+
+        function createTable(data) {
+            const keys = Object.keys(data[0]);
+            let html = '<table class="results-table"><thead><tr>';
+            
+            keys.forEach(key => {
+                html += `<th>${key}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            data.forEach(row => {
+                html += '<tr>';
+                keys.forEach(key => {
+                    html += `<td>${row[key] !== null ? row[key] : 'NULL'}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function showError(message) {
+            errorSection.textContent = 'Error: ' + message;
+            errorSection.style.display = 'block';
+        }
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+
+            const uploadStatus = document.getElementById('uploadStatus');
+            uploadStatus.innerHTML = '<div style="color: #667eea;">Uploading...</div>';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('http://localhost:8000/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    uploadStatus.innerHTML = `
+                        <div class="success">
+                            ✓ File uploaded successfully!<br>
+                            Table: <strong>${data.table_name}</strong><br>
+                            Rows: ${data.rows} | Columns: ${data.columns.length}<br>
+                            <em>Now you can ask questions without mentioning the table name!</em>
+                        </div>
+                    `;
+                    currentTable = data.table_name;
+                    loadTables();
+                    fileInput.value = '';
+                } else {
+                    uploadStatus.innerHTML = `<div class="error">Error: ${data.detail}</div>`;
+                }
+            } catch (error) {
+                uploadStatus.innerHTML = `<div class="error">Upload failed: ${error.message}</div>`;
+            }
+        }
+
+        async function loadTables() {
+            try {
+                const response = await fetch('http://localhost:8000/tables');
+                const data = await response.json();
+                
+                const tablesDiv = document.getElementById('tablesList');
+                if (data.tables && data.tables.length > 0) {
+                    tablesDiv.innerHTML = `
+                        <div class="tables-list">
+                            <strong>Available Tables:</strong><br>
+                            ${data.tables.map(t => `<span class="table-chip">${t}</span>`).join('')}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to load tables:', error);
+            }
+        }
+
+        // Load tables on page load
+        loadTables();
+    </script>
+</body>
+</html>
