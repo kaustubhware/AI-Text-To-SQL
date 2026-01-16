@@ -173,26 +173,21 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is open source and available under the MIT License.
 
 ## 👤 Author
 
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- Portfolio: [yourwebsite.com](https://yourwebsite.com)
+**Kaustubh Ware**
+- GitHub: [@kaustubhware](https://github.com/kaustubhware)
+- LinkedIn: [kaustubhware12](https://www.linkedin.com/in/kaustubhware12/)
+- Portfolio: [kaustubhware.github.io/GIS-ML](https://kaustubhware.github.io/GIS-ML/)
+- Email: kaustubhware12@gmail.com
 
 ## 🙏 Acknowledgments
 
 - [Groq](https://groq.com) for providing fast LLM inference
 - [FastAPI](https://fastapi.tiangolo.com/) for the amazing web framework
 - [PostgreSQL](https://www.postgresql.org/) for the robust database
-
-## 📧 Contact
-
-For questions or feedback, please reach out:
-- Email: your.email@example.com
-- LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
 
 ---
 
