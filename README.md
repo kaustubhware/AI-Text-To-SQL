@@ -14,20 +14,23 @@ An intelligent system that converts natural language questions into SQL queries 
 - 📊 **Query History** - Track all your queries
 - 🐳 **Docker Containerized** - Easy deployment
 
-## 🎥 Demo
-
-[Live Demo Link] - *Coming Soon*
-
 ## 🖼️ Screenshots
+
+### Home Interface
+![Home](screenshots/home.png)
+*Clean and modern interface to get started*
 
 ### Upload Your Data
 ![Upload Interface](screenshots/upload.png)
+*Upload CSV, Excel, or JSON files with a simple interface*
 
-### Ask Questions in Natural Language
-![Query Interface](screenshots/query.png)
+### Query Results - Example 1
+![Results 1](screenshots/results1.png)
+*View generated SQL queries and formatted results in real-time*
 
-### Get Instant Results
-![Results](screenshots/results.png)
+### Query Results - Example 2
+![Results 2](screenshots/result2.png)
+*Ask different questions and get instant answers from your data*
 
 ## 🚀 Quick Start
 
